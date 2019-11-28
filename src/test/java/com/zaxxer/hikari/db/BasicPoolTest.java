@@ -37,6 +37,8 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * @author brettw
+ * https://www.cnblogs.com/qqvvn/p/9503385.html
+ * https://my.oschina.net/u/580298/blog/674606?p={{page}}
  *
  */
 public class BasicPoolTest
@@ -49,18 +51,22 @@ public class BasicPoolTest
        config.setMaximumPoolSize(2);
        config.setConnectionTestQuery("SELECT 1");
        config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-       config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+       //config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+       config.addDataSourceProperty("url", "jdbc:h2:~/test2;DB_CLOSE_DELAY=-1");
+       config.addDataSourceProperty("user", "sa");
+       config.addDataSourceProperty("password", "");
 
        try (HikariDataSource ds = new HikariDataSource(config);
             Connection conn = ds.getConnection();
             Statement stmt = conn.createStatement()) {
           stmt.executeUpdate("DROP TABLE IF EXISTS basic_pool_test");
-          stmt.executeUpdate("CREATE TABLE basic_pool_test ("
-                            + "id INTEGER NOT NULL IDENTITY PRIMARY KEY, "
-                            + "timestamp TIMESTAMP, "
-                            + "string VARCHAR(128), "
-                            + "string_from_number NUMERIC "
-                            + ")");
+          int i = stmt.executeUpdate("CREATE TABLE basic_pool_test ("
+             + "id INTEGER NOT NULL IDENTITY PRIMARY KEY, "
+             + "timestamp TIMESTAMP, "
+             + "string VARCHAR(128), "
+             + "string_from_number NUMERIC "
+             + ")");
+          System.out.println("");
        }
    }
 
@@ -72,8 +78,9 @@ public class BasicPoolTest
       config.setMaximumPoolSize(10);
       config.setConnectionTestQuery("SELECT 1");
       config.setDataSourceClassName("org.h2.jdbcx.JdbcDataSource");
-      config.addDataSourceProperty("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-
+      config.addDataSourceProperty("url", "jdbc:h2:~/test2;DB_CLOSE_DELAY=-1");
+      config.addDataSourceProperty("user", "sa");
+      config.addDataSourceProperty("password", "");
       System.setProperty("com.zaxxer.hikari.housekeeping.periodMs", "1000");
 
       try (HikariDataSource ds = new HikariDataSource(config)) {
